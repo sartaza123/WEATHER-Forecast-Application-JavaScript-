@@ -6,7 +6,85 @@
     <link href="./output.css" rel="stylesheet" />
   </head>
   <body>
-    <h1 class="text-3xl font-bold underline">Hello world!</h1>
+    <div class="main-container">
+      <!-- backgroun Video -->
+      <section class="w-full">
+        <video
+          src="src/assets/videos/rain_weather.mp4"
+          autoplay
+          loop
+          muted
+          class="fixed top-0 left-0 w-full h-full object-cover -z-10"
+        ></video>
+        <!-- header section =============================== -->
+        <header class="mx-20 my-10">
+          <!-- heading and inputs -->
+          <div
+            class="text-white p-5 flex justify-between items-center liquid-glass"
+          >
+            <div class="heading text-3xl"><span>Weather</span> Forecast</div>
+            <div class="search-area flex">
+              <input
+                type="text"
+                placeholder="Search Location"
+                class="outline-0 border-0 liquid-glass px-4 py-1 mx-2.5 text-xl"
+              />
+              <button class="liquid-glass px-4 py-1 mx-2.5">Search</button>
+            </div>
+          </div>
+          <!-- recent searches -->
+          <div class="recent-searches mt-5 flex">
+            <div class="recent-location-cards flex">
+              <div class="locations px-3 py-1 mr-6 flex liquid-glass">
+                <div class="location-logo mr-1">o</div>
+                <div class="location-name">Wasseypur</div>
+              </div>
+            </div>
+          </div>
+        </header>
+      </section>
+
+      <!-- current location temprature -->
+
+      <section class="box w-full flex flex-col items-center p-10">
+        <h2 class="temprature text-7xl">25 C</h2>
+        <h4 class="weather-report text-2xl">Rainy</h4>
+        <h4 class="wind-speed">Wind Speed: 3km</h4>
+      </section>
+
+      <!-- Hourly Forecast ======================================== -->
+
+      <section
+        class="Hourly-forecast py-6 px-12 mx-20 my-10 rounded-4xl liquid-glass"
+      >
+        <h2 class="text-3xl border-b-2">Hourly Forecast</h2>
+        <div class="hourly-weather-cards mt-2.5 flex">
+          <div class="hours p-5 mr-6 rounded-2xl text-center liquid-glass">
+            <div class="time">07:21</div>
+            <div class="am-pm">PM</div>
+            <div class="hour-logo">Logo</div>
+            <div class="hourly-temprature">20 C</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Daily forecast -->
+
+      <section
+        class="Hourly-forecast py-6 px-12 mx-20 my-10 rounded-4xl liquid-glass"
+      >
+        <h2 class="text-3xl border-b-2">Daily Forecast</h2>
+        <div class="hourly-weather-cards mt-2.5 flex">
+          <div class="hours p-5 mr-6 rounded-2xl text-center liquid-glass">
+            <div class="date">02-nov</div>
+            <div class="daily-logo">Logo</div>
+            <div class="daily-temprature">20 C</div>
+            <div class="wind-speed">3km</div>
+            <div class="humidity">70%</div>
+          </div>
+        </div>
+      </section>
+    </div>
 
     <!-- Scripts  -->
     <script src="script.js"></script>
