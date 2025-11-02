@@ -36,7 +36,9 @@
           <div class="recent-searches mt-5 flex">
             <div class="recent-location-cards flex">
               <div class="locations px-3 py-1 mr-6 flex liquid-glass">
-                <div class="location-logo mr-1">o</div>
+                <div class="location-logo mr-1">
+                  <ion-icon name="location-outline"></ion-icon>
+                </div>
                 <div class="location-name">Wasseypur</div>
               </div>
             </div>
@@ -47,7 +49,13 @@
       <!-- current location temprature -->
 
       <section class="box w-full flex flex-col items-center p-9">
-        <h2 class="temprature text-7xl">25 C</h2>
+        <h2 class="temprature text-7xl">
+          25<ion-icon
+            name="radio-button-off-outline"
+            class="text-xl mb-9 -ml-2 ml-0.5"
+          ></ion-icon
+          >C
+        </h2>
         <h4 class="weather-report text-2xl">Rainy</h4>
         <h4 class="wind-speed">Wind Speed: 3km</h4>
       </section>
@@ -63,7 +71,13 @@
             <div class="time">07:21</div>
             <div class="am-pm">PM</div>
             <div class="hour-logo">Logo</div>
-            <div class="hourly-temprature">20 C</div>
+            <div class="hourly-temprature">
+              20<ion-icon
+                name="radio-button-off-outline"
+                class="text-[6px] mb-2"
+              ></ion-icon>
+              C
+            </div>
           </div>
         </div>
       </section>
@@ -78,7 +92,13 @@
           <div class="hours p-5 mr-6 rounded-2xl text-center liquid-glass">
             <div class="date">02-nov</div>
             <div class="daily-logo">Logo</div>
-            <div class="daily-temprature">20 C</div>
+            <div class="daily-temprature">
+              20<ion-icon
+                name="radio-button-off-outline"
+                class="text-[6px] mb-2"
+              ></ion-icon>
+              C
+            </div>
             <div class="wind-speed">3km</div>
             <div class="humidity">70%</div>
           </div>
@@ -88,5 +108,14 @@
 
     <!-- Scripts  -->
     <script src="script.js"></script>
+    <!-- ioi-icon scipt -->
+    <script
+      type="module"
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.esm.js"
+    ></script>
+    <script
+      nomodule
+      src="https://unpkg.com/ionicons@7.1.0/dist/ionicons/ionicons.js"
+    ></script>
   </body>
 </html>
