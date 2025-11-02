@@ -297,6 +297,9 @@
   .p-5 {
     padding: calc(var(--spacing) * 5);
   }
+  .p-9 {
+    padding: calc(var(--spacing) * 9);
+  }
   .p-10 {
     padding: calc(var(--spacing) * 10);
   }
