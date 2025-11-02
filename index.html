@@ -24,12 +24,20 @@
           >
             <div class="heading text-3xl"><span>Weather</span> Forecast</div>
             <div class="search-area flex">
+              <div
+                class="current-location mr-2.5 p-2 w-10 h-10 text-2xl liquid-glass rounded-full flex items-center justify-center"
+              >
+                <ion-icon name="locate-outline"></ion-icon>
+              </div>
               <input
                 type="text"
                 placeholder="Search Location"
                 class="outline-0 border-0 liquid-glass px-4 py-1 mx-2.5 text-xl"
               />
-              <button class="liquid-glass px-4 py-1 mx-2.5">Search</button>
+              <button class="liquid-glass px-4 py-1 mx-2.5">
+                <ion-icon class="-mb-0.5 mr-1" name="search-outline"></ion-icon
+                >Search
+              </button>
             </div>
           </div>
           <!-- recent searches -->
@@ -52,7 +60,7 @@
         <h2 class="temprature text-7xl">
           25<ion-icon
             name="radio-button-off-outline"
-            class="text-xl mb-9 -ml-2 ml-0.5"
+            class="text-xl mb-9 ml-0.5"
           ></ion-icon
           >C
         </h2>
