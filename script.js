@@ -1,18 +1,42 @@
-const search = document.querySelector("#search");
+const searchBtn = document.querySelector("#search");
+const input = document.querySelector("#input");
+const tempratureDisplay = document.querySelector(".temprature");
 
-search.addEventListener("click", () => {
-  input = document.querySelector("#input").value;
-  console.log(input);
-
-  const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${input}&aqi=yes`;
-  const options = {
-    method: "GET",
-  };
+searchBtn.addEventListener("click", () => {
   async function getWeather() {
+    const city = input.value.trim();
+    if (city === "") {
+      console.log("please inser city name");
+      return;
+    }
+    const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${city}&aqi=yes`;
+
     try {
-      const response = await fetch(url, options);
-      const result = await response.text();
-      console.log(result);
+      const response = await fetch(url);
+      const result = await response.json();
+      // console.log(result);
+
+      const tempC = result.current.temp_c;
+      const tempF = result.current.temp_f;
+      const location = result.location.name;
+      const weather = result.current.condition.text;
+      const feelslike_c = result.current.feelslike_c;
+      const feelslike_f = result.current.feelslike_f;
+      const humidity = result.current.humidity;
+      const wind_kph = result.current.wind_kph;
+      const wind_mph = result.current.wind_mph;
+      console.log(
+        tempC,
+        tempF,
+        location,
+        weather,
+        feelslike_c,
+        feelslike_f,
+        humidity,
+        wind_kph,
+        wind_mph
+      );
+      console.log(result.current);
     } catch (error) {
       console.error(error);
     }
