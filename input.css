@@ -1,13 +1,6 @@
 @import "tailwindcss";
 
-* {
-  color: white;
-}
-
 .liquid-glass {
-  /* display: flex;
-  align-items: center;
-  justify-content: center; */
   border-radius: 20px;
   font-weight: 600;
   color: #ffffff;

@@ -1,6 +1,7 @@
 const searchBtn = document.querySelector("#search");
 let input = document.querySelector("#input");
 const tempratureDisplay = document.querySelector(".temprature");
+const validation = document.querySelector(".validation");
 
 searchBtn.addEventListener("click", () => {
   let isCelsioous = true;
@@ -8,7 +9,7 @@ searchBtn.addEventListener("click", () => {
   async function getWeather() {
     const city = input.value.trim();
     if (city === "") {
-      console.log("please enter city name");
+      validation.innerHTML = "Please enter a city name";
       return;
     }
     const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${city}&aqi=yes`;
@@ -81,13 +82,13 @@ searchBtn.addEventListener("click", () => {
       const wind_mph = result.current.wind_mph;
       // console.log(result.current);
       input.value = "";
+      validation.innerHTML = "";
     } catch (error) {
       console.error(error);
     }
   }
   getWeather();
 });
-input.value = "";
 
 // api key
 // 02193e91dd7b4b849d4104126250211
