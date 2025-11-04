@@ -1,7 +1,7 @@
 const searchBtn = document.querySelector("#search");
 let input = document.querySelector("#input");
 const tempratureDisplay = document.querySelector(".temprature");
-const validation = document.querySelector(".validation");
+const validation = document.querySelector("#validation");
 
 searchBtn.addEventListener("click", () => {
   let isCelsioous = true;
@@ -20,7 +20,7 @@ searchBtn.addEventListener("click", () => {
 
       // searched location ==============================================
       const location = result.location.name;
-      const locationCards = document.querySelector(".recent-location-cards");
+      const locationCards = document.querySelector("#recent-location-cards");
       locationCards.innerHTML = `
       <div class="locations px-3 py-1 mr-6 flex liquid-glass">
         <div class="location-logo mr-1">
@@ -34,25 +34,24 @@ searchBtn.addEventListener("click", () => {
       const temp_f = parseInt(result.current.temp_f);
       tempratureDisplay.innerHTML = `
           ${temp_c}<ion-icon name="radio-button-off-outline"
-            class="text-xl mb-9 ml-0.5"></ion-icon>C`;
+          class="text-xl mb-9 ml-0.5"></ion-icon>C`;
 
       // weather report =================================================
       const weather = result.current.condition.text;
-      const weatherReport = (document.querySelector(
-        ".weather-report"
-      ).innerHTML = weather);
+      const weatherReport = document.querySelector("#weather-report");
+      weatherReport.innerHTML = weather;
 
       // feels like =====================================================
       const feelslike_c = parseInt(result.current.feelslike_c);
       const feelslike_f = parseInt(result.current.feelslike_f);
-      const feelsC = document.querySelector(".feels-like");
+      const feelsC = document.querySelector("#feels-like");
       feelsC.innerHTML = `Feels Like ${feelslike_c}<ion-icon
         name="radio-button-off-outline"
         class="text-[6px] mb-2"></ion-icon>C`;
 
       // current weather toggle between Cel & Fe ========================
 
-      const weather_cel_fer = document.querySelector(".current-weather");
+      const weather_cel_fer = document.querySelector("#current-weather");
       weather_cel_fer.addEventListener("click", () => {
         if (isCelsioous === false) {
           // temprature in Celcious =================
