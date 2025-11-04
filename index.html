@@ -22,11 +22,6 @@
           <div class="text-white p-5 flex justify-between liquid-glass h-20">
             <h1 class="heading text-3xl"><span>Weather</span> Forecast</h1>
             <div class="search-area flex">
-              <div
-                class="current-location mr-2.5 p-2 w-10 h-10 text-2xl liquid-glass rounded-full flex items-center justify-center"
-              >
-                <ion-icon name="locate-outline"></ion-icon>
-              </div>
               <div class="input-feild flex flex-col">
                 <input
                   id="input"
@@ -49,14 +44,11 @@
           </div>
           <!-- recent searches -->
           <div class="recent-searches mt-5 flex">
-            <div id="recent-location-cards" class="flex">
-              <!-- <div class="locations px-3 py-1 mr-6 flex liquid-glass">
-                <div class="location-logo mr-1">
-                  <ion-icon name="location-outline"></ion-icon>
-                </div>
-                <div class="location-name"></div>
-              </div> -->
-            </div>
+            <!-- current location -->
+            <div id="current-location-card" class="flex"></div>
+
+            <!-- recent location searches -->
+            <div id="recent-location-cards" class="flex"></div>
           </div>
         </header>
       </section>
@@ -71,11 +63,7 @@
           class="cursor-pointer flex flex-col items-center w-52"
         >
           <h2 class="temprature text-7xl">
-            <!-- <ion-icon
-            name="radio-button-off-outline"
-            class="text-xl mb-9 ml-0.5"
-          ></ion-icon
-          >C -->
+            <!-- degree icon -->
           </h2>
           <h4 id="weather-report" class="text-2xl"></h4>
           <h4 id="feels-like"></h4>

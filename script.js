@@ -3,14 +3,14 @@ let input = document.querySelector("#input");
 const tempratureDisplay = document.querySelector(".temprature");
 const validation = document.querySelector("#validation");
 
-// create suggestions container dynamically if not in HTML
+// creating suggestions container =======================================
 let suggestionBox = document.createElement("ul");
 suggestionBox.id = "city-suggestions";
 suggestionBox.className =
   "absolute bg-white opacity-50 shadow-lg rounded-lg mt-10 ml-5 max-h-48 overflow-y-auto z-50 text-gray-800";
 input.parentElement.appendChild(suggestionBox);
 
-// ------------------ City Suggestions While Typing ------------------
+// ----------------------------------- City Suggestions While Typing...--------------------------------------
 input.addEventListener("input", async () => {
   const query = input.value.trim();
   suggestionBox.innerHTML = ""; // clear old suggestions
@@ -29,7 +29,7 @@ input.addEventListener("input", async () => {
       return;
     }
 
-    // Add suggestions
+    // Add suggestions ===================================================
     data.forEach((city) => {
       const li = document.createElement("li");
       li.className = "p-2 hover:bg-gray-100 cursor-pointer";
@@ -67,18 +67,16 @@ async function getWeather(city) {
 
     // searched location ==============================================
     const location = result.location.name;
-    const locationState = result.location.region;
-    const locationCountry = result.location.country;
-    console.log(location, locationState, locationCountry);
-
     const locationCards = document.querySelector("#recent-location-cards");
-    locationCards.innerHTML = `
-      <div class="locations px-3 py-1 mr-6 flex liquid-glass">
-        <div class="location-logo mr-1">
-          <ion-icon name="location-outline"></ion-icon>
-        </div>
-        <div class="location-name">${location}</div>
-      </div>`;
+    const locationContainer = document.createElement("div");
+    locationContainer.className = "px-3 py-1 mr-6 flex liquid-glass";
+    const locationLogo = document.createElement("div");
+    locationLogo.innerHTML = `<ion-icon name="location-outline"></ion-icon>`;
+    const locationName = document.createElement("div");
+    locationName.innerHTML = location;
+
+    locationCards.appendChild(locationContainer);
+    locationContainer.append(locationLogo, locationName);
 
     // temprature =====================================================
     const temp_c = parseInt(result.current.temp_c);
@@ -120,17 +118,36 @@ async function getWeather(city) {
       isCelsioous = !isCelsioous;
     };
 
-    // humidity and wind =============================================
+    // humidity and wind =================================================
     const humidity = result.current.humidity;
     const wind_kph = result.current.wind_kph;
     const wind_mph = result.current.wind_mph;
 
     input.value = "";
     validation.innerHTML = "";
+    suggestionBox.innerHTML = "";
   } catch (error) {
     console.error(error);
   }
 }
 
-// api key
-// 02193e91dd7b4b849d4104126250211
+//  current locaton when load =======================================
+
+window.addEventListener("load", async () => {
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(async (position) => {
+      const lat = position.coords.latitude;
+      const lon = position.coords.longitude;
+
+      try {
+        const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${lat},${lon}&aqi=yes`;
+        const response = await fetch(url);
+        const result = await response.json();
+        const currentCity = result.location.name;
+        getWeather(currentCity);
+      } catch (error) {
+        console.error("Error loading current location", error);
+      }
+    });
+  }
+});
