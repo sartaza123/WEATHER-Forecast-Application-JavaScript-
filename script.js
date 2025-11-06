@@ -10,7 +10,7 @@ suggestionBox.className =
   "absolute bg-white opacity-50 shadow-lg rounded-lg mt-10 ml-5 max-h-48 overflow-y-auto z-50 text-gray-800";
 input.parentElement.appendChild(suggestionBox);
 
-// ----------------------------------- City Suggestions While Typing...--------------------------------------
+// ----------------------------------- City Suggestions While Typing --------------------------------------
 input.addEventListener("input", async () => {
   const query = input.value.trim();
   suggestionBox.innerHTML = ""; // clear old suggestions
@@ -23,21 +23,19 @@ input.addEventListener("input", async () => {
     );
     const data = await response.json();
 
-    // No results
     if (data.length === 0) {
       suggestionBox.innerHTML = `<li class="p-2 text-gray-400">No results found</li>`;
       return;
     }
 
-    // Add suggestions ===================================================
     data.forEach((city) => {
       const li = document.createElement("li");
       li.className = "p-2 hover:bg-gray-100 cursor-pointer";
       li.textContent = `${city.name}, ${city.region}, ${city.country}`;
       li.addEventListener("click", () => {
         input.value = city.name;
-        suggestionBox.innerHTML = ""; // hide suggestions
-        getWeather(city.name); // fetch weather for selected city
+        suggestionBox.innerHTML = "";
+        getWeather(city.name);
       });
       suggestionBox.appendChild(li);
     });
@@ -59,25 +57,24 @@ searchBtn.addEventListener("click", () => {
 // ------------------ Get Weather Function ------------------
 async function getWeather(city) {
   let isCelsioous = true;
-  const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${city}&days=2&aqi=yes`;
+  const url = `https://api.weatherapi.com/v1/forecast.json?key=02193e91dd7b4b849d4104126250211&q=${city}&days=5&aqi=no`;
 
   try {
     const response = await fetch(url);
     const result = await response.json();
+
     // searched location ==============================================
     const location = result.location.name;
     const locationCards = document.querySelector("#recent-location-cards");
-    const locationContainer = document.createElement("div");
-    locationContainer.className = "px-3 py-1 mr-6 flex liquid-glass";
-    const locationLogo = document.createElement("div");
-    locationLogo.innerHTML = `<ion-icon name="location-outline"></ion-icon>`;
-    const locationName = document.createElement("div");
-    locationName.innerHTML = location;
+    locationCards.innerHTML = `
+      <div class="locations px-3 py-1 mr-6 flex liquid-glass">
+        <div class="location-logo mr-1">
+          <ion-icon name="location-outline"></ion-icon>
+        </div>
+        <div class="location-name">${location}</div>
+      </div>`;
 
-    locationCards.appendChild(locationContainer);
-    locationContainer.append(locationLogo, locationName);
-
-    // temprature =====================================================
+    // temperature =====================================================
     const temp_c = parseInt(result.current.temp_c);
     const temp_f = parseInt(result.current.temp_f);
     tempratureDisplay.innerHTML = `
@@ -117,17 +114,30 @@ async function getWeather(city) {
       isCelsioous = !isCelsioous;
     };
 
-    const nextDays = document.querySelector("#days");
-    // nextDays.innerHTML = "";
+    // ======================== 5-Day Forecast ========================
+    const forecastContainer = document.querySelector("#days");
+    forecastContainer.innerHTML = ""; // clear old forecast cards
 
-    const day2 = result.forecast.forecastday[1];
+    const forecastDays = result.forecast.forecastday;
+    forecastDays.forEach((day) => {
+      const date = day.date;
+      const condition = day.day.condition.text;
+      const icon = day.day.condition.icon;
+      const maxTemp = Math.round(day.day.maxtemp_c);
+      const minTemp = Math.round(day.day.mintemp_c);
 
-    const date = day2.date;
-    const maxTempC = parseInt(day2.day.maxtemp_c);
-    const minTempC = parseInt(day2.day.mintemp_c);
-    const condition = day2.day.condition.text;
-
-    console.log(date, maxTempC, minTempC, condition);
+      const card = document.createElement("div");
+      card.className =
+        "p-4 rounded-xl bg-white/10 backdrop-blur-lg text-white text-center shadow-md m-2 w-32";
+      card.innerHTML = `
+        <p class="font-semibold text-sm">${date}</p>
+        <img src="${icon}" alt="${condition}" class="mx-auto w-12 h-12">
+        <p class="text-sm">${condition}</p>
+        <p class="text-lg font-bold">${maxTemp}°C</p>
+        <p class="text-xs text-gray-300">Min ${minTemp}°C</p>
+      `;
+      forecastContainer.appendChild(card);
+    });
 
     // humidity and wind =================================================
     const humidity = result.current.humidity;
@@ -142,8 +152,7 @@ async function getWeather(city) {
   }
 }
 
-//  current locaton when load =======================================
-
+//  current location when load =======================================
 window.addEventListener("load", async () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async (position) => {
@@ -151,7 +160,7 @@ window.addEventListener("load", async () => {
       const lon = position.coords.longitude;
 
       try {
-        const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${lat},${lon}&aqi=yes`;
+        const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${lat},${lon}&aqi=no`;
         const response = await fetch(url);
         const result = await response.json();
         const currentCity = result.location.name;
