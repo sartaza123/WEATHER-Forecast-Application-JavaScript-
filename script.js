@@ -59,12 +59,11 @@ searchBtn.addEventListener("click", () => {
 // ------------------ Get Weather Function ------------------
 async function getWeather(city) {
   let isCelsioous = true;
-  const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${city}&aqi=yes`;
+  const url = `https://api.weatherapi.com/v1/current.json?key=02193e91dd7b4b849d4104126250211&q=${city}&days=2&aqi=yes`;
 
   try {
     const response = await fetch(url);
     const result = await response.json();
-
     // searched location ==============================================
     const location = result.location.name;
     const locationCards = document.querySelector("#recent-location-cards");
@@ -117,6 +116,18 @@ async function getWeather(city) {
       }
       isCelsioous = !isCelsioous;
     };
+
+    const nextDays = document.querySelector("#days");
+    // nextDays.innerHTML = "";
+
+    const day2 = result.forecast.forecastday[1];
+
+    const date = day2.date;
+    const maxTempC = parseInt(day2.day.maxtemp_c);
+    const minTempC = parseInt(day2.day.mintemp_c);
+    const condition = day2.day.condition.text;
+
+    console.log(date, maxTempC, minTempC, condition);
 
     // humidity and wind =================================================
     const humidity = result.current.humidity;
