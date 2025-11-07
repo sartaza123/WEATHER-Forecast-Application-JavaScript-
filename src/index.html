@@ -9,13 +9,13 @@
     <div class="main-container">
       <!-- backgroun Video -->
       <section class="w-full">
-        <video
-          src="src/assets/videos/rain_weather.mp4"
-          autoplay
-          loop
-          muted
+        <div id="background">
+          <img
+          src="assets/images/cloudy_thunder.png"
+          alt="weather backgroun images"
           class="fixed top-0 left-0 w-full h-full object-cover -z-10"
-        ></video>
+        ></img>
+        </div>
         <!-- header section =============================== -->
         <header class="mx-20 my-10">
           <!-- heading and inputs -->
@@ -62,7 +62,7 @@
           class="cursor-pointer flex flex-col items-center w-52"
         >
           <h2 class="temprature text-7xl"></h2>
-          <h4 id="weather-report" class="text-2xl">o</h4>
+          <h4 id="weather-report" class="text-2xl"></h4>
           <h4 id="feels-like"></h4>
         </div>
       </section>
