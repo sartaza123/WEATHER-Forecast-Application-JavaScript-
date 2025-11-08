@@ -57,7 +57,7 @@ searchBtn.addEventListener("click", () => {
 // --------------- Dynamic background------------
 
 function updateBackground(condition, isDay) {
-  const main = document.querySelector("#background");
+  const dynamicBackground = document.querySelector("#background");
   const weather = condition.toLowerCase();
 
   let bgImage = "default.jpg"; // fallback
@@ -79,11 +79,13 @@ function updateBackground(condition, isDay) {
   }
 
   // Apply background image
-  main.style.backgroundImage = `url('/assets/images/${bgImage}')`;
-  main.style.backgroundSize = "cover";
-  main.style.backgroundPosition = "center";
-  main.style.backgroundRepeat = "no-repeat";
-  main.style.transition = "background-image 1s ease-in-out";
+  const backgroundImg = document.createElement("img");
+  backgroundImg.setAttribute("src",`assets/images/${bgImage}`)
+  backgroundImg.setAttribute("class","fixed top-0 left-0 w-full h-full object-cover -z-10")  
+
+  dynamicBackground.appendChild(backgroundImg)
+  console.log(dynamicBackground)
+
 }
 
 // ------------------ Get Weather Function ------------------
