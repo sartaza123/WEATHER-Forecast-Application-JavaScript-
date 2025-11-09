@@ -80,12 +80,13 @@ function updateBackground(condition, isDay) {
 
   // Apply background image
   const backgroundImg = document.createElement("img");
-  backgroundImg.setAttribute("src",`assets/images/${bgImage}`)
-  backgroundImg.setAttribute("class","fixed top-0 left-0 w-full h-full object-cover -z-10")  
+  backgroundImg.setAttribute("src", `assets/images/${bgImage}`);
+  backgroundImg.setAttribute(
+    "class",
+    "fixed top-0 left-0 w-full h-full object-cover -z-10"
+  );
 
-  dynamicBackground.appendChild(backgroundImg)
-  console.log(dynamicBackground)
-
+  dynamicBackground.appendChild(backgroundImg);
 }
 
 // ------------------ Get Weather Function ------------------
@@ -97,26 +98,64 @@ async function getWeather(city) {
     const response = await fetch(url);
     const result = await response.json();
 
-     // Update background dynamically
+    // Update background dynamically
     updateBackground(result.current.condition.text, result.current.is_day);
 
-    // searched location ==============================================
-    const location = result.location.name;
+    // All locations ==============================================
+
+    const searchedLocation = result.location.name;
     const locationCards = document.querySelector("#recent-location-cards");
-    locationCards.innerHTML = `
-      <div class="locations px-3 py-1 mr-6 flex liquid-glass">
-        <div class="location-logo mr-1">
-          <ion-icon name="location-outline"></ion-icon>
-        </div>
-        <div class="location-name">${location}</div>
-      </div>`;
+    let recentCities = JSON.parse(localStorage.getItem("recentSearches")) || [];
+    if (!recentCities.includes(searchedLocation)) {
+      recentCities.unshift(searchedLocation);
+      if (recentCities.length > 8) recentCities.pop();
+      localStorage.setItem("recentSearches", JSON.stringify(recentCities));
+    }
+    // current location =============
+    const currentLocation = recentCities.splice(recentCities.length - 1);
+    const currentLocationCard = document.querySelector(
+      "#current-location-card"
+    );
+    // const currentCard = document.createElement("div");
+    // currentCard.className = " px-3 py-1 mr-6 flex selected-liquid-glass";
+    // const currentLocationLogo = document.createElement("div");
+    // currentLocationLogo.className = "mr-1";
+    // currentLocationLogo.innerHTML = `<ion-icon name="navigate-outline"></ion-icon>`;
+    // const currentLocationName = document.createElement("div");
+    // currentLocationName.innerHTML = currentLocation;
+
+    // currentCard.append(currentLocationLogo, currentLocationName);
+    // currentLocationCard.appendChild(currentCard);
+
+    currentLocationCard.innerHTML = `
+    <div class=" px-3 py-1 mr-6 flex selected-liquid-glass">
+    <div class=" mr-1">
+    <ion-icon name="navigate-outline"></ion-icon>
+    </div>
+    <div>${currentLocation}</div>
+    </div>`;
+
+    //  searched location =========================
+    locationCards.innerHTML = "";
+    recentCities.forEach((cityName) => {
+      const searchedCard = document.createElement("div");
+      searchedCard.className = "px-3 py-1 mr-6 flex liquid-glass";
+      const locationLogo = document.createElement("div");
+      locationLogo.innerHTML = `<ion-icon name="location-outline"></ion-icon>`;
+      const searchedLocationName = document.createElement("div");
+      searchedLocationName.innerHTML = cityName;
+
+      locationCards.appendChild(searchedCard);
+      searchedCard.append(locationLogo, searchedLocationName);
+    });
+
+    
 
     // temperature =====================================================
     const temp_c = parseInt(result.current.temp_c);
     const temp_f = parseInt(result.current.temp_f);
     tempratureDisplay.innerHTML = `
-      ${temp_c}<ion-icon name="radio-button-off-outline"
-      class="text-xl mb-9 ml-0.5"></ion-icon>C`;
+      ${temp_c}°C`;
 
     // weather report =================================================
     const weather = result.current.condition.text;
@@ -127,26 +166,19 @@ async function getWeather(city) {
     const feelslike_c = parseInt(result.current.feelslike_c);
     const feelslike_f = parseInt(result.current.feelslike_f);
     const feelsC = document.querySelector("#feels-like");
-    feelsC.innerHTML = `Feels Like ${feelslike_c}<ion-icon
-      name="radio-button-off-outline"
-      class="text-[6px] mb-2"></ion-icon>C`;
+    feelsC.innerHTML = `Feels Like ${feelslike_c}°C`;
 
     // current weather toggle between Cel & Fe ========================
     const weather_cel_fer = document.querySelector("#current-weather");
     weather_cel_fer.onclick = () => {
       if (isCelsioous === false) {
         tempratureDisplay.innerHTML = `
-        ${temp_c}<ion-icon name="radio-button-off-outline" class="text-xl mb-9 ml-0.5"></ion-icon>C`;
-        feelsC.innerHTML = `Feels Like ${feelslike_c}<ion-icon
-        name="radio-button-off-outline"
-        class="text-[6px] mb-2"></ion-icon>C`;
+        ${temp_c}°C`;
+        feelsC.innerHTML = `Feels Like ${feelslike_c}°C`;
       } else {
         tempratureDisplay.innerHTML = `
-        ${temp_f}<ion-icon name="radio-button-off-outline"
-        class="text-xl mb-9 ml-0.5"></ion-icon>F`;
-        feelsC.innerHTML = `Feels Like ${feelslike_f}<ion-icon
-          name="radio-button-off-outline"
-          class="text-[6px] mb-2"></ion-icon>F`;
+        ${temp_f}°F`;
+        feelsC.innerHTML = `Feels Like ${feelslike_f}°F`;
       }
       isCelsioous = !isCelsioous;
     };
@@ -208,3 +240,4 @@ window.addEventListener("load", async () => {
     });
   }
 });
+// localStorage.clear()
