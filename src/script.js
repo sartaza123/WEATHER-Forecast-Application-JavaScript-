@@ -69,13 +69,13 @@ function updateBackground(condition, isDay) {
   } else if (weather.includes("snow")) {
     bgImage = "snow.jpg";
   } else if (weather.includes("mist") || weather.includes("fog")) {
-    bgImage = "mist.jpg";
+    bgImage = "mist.png";
   } else if (weather.includes("thunder")) {
     bgImage = "thunder.jpg";
   } else if (isDay === 0) {
     bgImage = "night.jpg";
   } else if (weather.includes("sunny") || weather.includes("clear")) {
-    bgImage = "sunny.jpg";
+    bgImage = "sunny.png";
   }
 
   // Apply background image
@@ -134,6 +134,9 @@ async function getWeather(city) {
     </div>
     <div>${currentLocation}</div>
     </div>`;
+    currentLocationCard.addEventListener("click", () => {
+      getWeather(currentLocation);
+    });
 
     //  searched location =========================
     locationCards.innerHTML = "";
@@ -145,11 +148,13 @@ async function getWeather(city) {
       const searchedLocationName = document.createElement("div");
       searchedLocationName.innerHTML = cityName;
 
+      searchedCard.addEventListener("click", () => {
+        getWeather(cityName);
+      });
+
       locationCards.appendChild(searchedCard);
       searchedCard.append(locationLogo, searchedLocationName);
     });
-
-    
 
     // temperature =====================================================
     const temp_c = parseInt(result.current.temp_c);
@@ -240,4 +245,4 @@ window.addEventListener("load", async () => {
     });
   }
 });
-// localStorage.clear()
+// localStorage.clear();
