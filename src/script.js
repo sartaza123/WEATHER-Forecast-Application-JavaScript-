@@ -71,11 +71,11 @@ function updateBackground(condition, isDay) {
   } else if (weather.includes("mist") || weather.includes("fog")) {
     bgImage = "mist.png";
   } else if (weather.includes("thunder")) {
-    bgImage = "thunder.jpg";
+    bgImage = "thunder.jpeg";
   } else if (isDay === 0) {
     bgImage = "night.jpg";
   } else if (weather.includes("sunny") || weather.includes("clear")) {
-    bgImage = "sunny.png";
+    bgImage = "sunny.jpg";
   }
 
   // Apply background image
@@ -149,9 +149,17 @@ async function getWeather(city) {
       searchedLocationName.innerHTML = cityName;
 
       searchedCard.addEventListener("click", () => {
+        document.querySelectorAll(".recent-card").forEach((c) => {
+          // Remove highlight from all other cards
+          c.classList.remove("selected-liquid-glass");
+          c.classList.add("liquid-glass");
+        });
+
+        // Highlight this clicked card
+        searchedCard.classList.remove("liquid-glass");
+        searchedCard.classList.add("selected-liquid-glass");
         getWeather(cityName);
       });
-
       locationCards.appendChild(searchedCard);
       searchedCard.append(locationLogo, searchedLocationName);
     });
