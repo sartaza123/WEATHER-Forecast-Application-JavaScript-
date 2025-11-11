@@ -103,7 +103,7 @@ async function getWeather(city, isCurrentLocation = false) {
     // Update background dynamically
     updateBackground(result.current.condition.text, result.current.is_day);
 
-    // All locations ==============================================
+    // DOM references
     const searchedLocation = result.location.name;
     const locationCards = document.querySelector("#recent-location-cards");
     const currentLocationCard = document.querySelector(
@@ -115,58 +115,60 @@ async function getWeather(city, isCurrentLocation = false) {
     const currentCard = document.querySelector("#current-card");
 
     let recentCities = JSON.parse(localStorage.getItem("recentSearches")) || [];
-    if (!recentCities.includes(searchedLocation)) {
-      recentCities.unshift(searchedLocation);
-      if (recentCities.length > 8) recentCities.pop();
-      localStorage.setItem("recentSearches", JSON.stringify(recentCities));
-    }
 
+    // If new city -> add to top, maintain limit
+    const cityIndex = recentCities.indexOf(searchedLocation);
+    if (cityIndex === -1) {
+      recentCities.unshift(searchedLocation);
+      if (recentCities.length > 6) recentCities.pop();
+    }
+    localStorage.setItem("recentSearches", JSON.stringify(recentCities));
     const currentLocation = recentCities.splice(recentCities.length - 1);
-    // const currentLocation = recentCities[recentCities.length - 1];
     currentLocationName.innerHTML = currentLocation;
 
-    // Highlight logic for current card
-    if (isCurrentLocation) {
-      currentCard.classList.add("selected-liquid-glass");
-      currentCard.classList.remove("liquid-glass");
-    } else {
-      currentCard.classList.remove("selected-liquid-glass");
-      currentCard.classList.add("liquid-glass");
-    }
+    // 🧹 Unhighlight all before setting new highlights
+    document
+      .querySelectorAll(
+        "#recent-location-cards .selected-liquid-glass, #current-card.selected-liquid-glass"
+      )
+      .forEach((c) => {
+        c.classList.remove("selected-liquid-glass");
+        if (!c.classList.contains("liquid-glass")) {
+          c.classList.add("liquid-glass");
+        }
+      });
 
-    // searched location =========================
+    // =================== Render searched cards ===================
     locationCards.innerHTML = "";
+    localStorage.setItem("selectedCity", searchedLocation);
     const lastSelectedCity = localStorage.getItem("selectedCity");
 
-    // Create recent city cards
     recentCities.forEach((cityName) => {
       const searchedCard = document.createElement("div");
       searchedCard.className =
         "px-3 py-1 mr-6 flex items-center liquid-glass cursor-pointer transition-all duration-300";
 
       const locationLogo = document.createElement("div");
-      locationLogo.innerHTML = `<ion-icon name="location-outline"></ion-icon>`;
+      locationLogo.innerHTML = `<ion-icon name='location-outline'></ion-icon>`;
       const searchedLocationName = document.createElement("div");
       searchedLocationName.innerHTML = cityName;
 
-      // Restore highlight if the city was previously selected
+      // Highlight new or existing searched city
       if (
-        lastSelectedCity &&
+        !isCurrentLocation &&
         cityName.trim().toLowerCase() === lastSelectedCity.trim().toLowerCase()
       ) {
         searchedCard.classList.remove("liquid-glass");
         searchedCard.classList.add("selected-liquid-glass");
       }
 
-      // Click event for each recent city
+      // Click handler for city card
       searchedCard.addEventListener("click", () => {
-        // Save selected city to localStorage
         localStorage.setItem("selectedCity", cityName);
 
-        // Remove highlight from all others
         document
           .querySelectorAll(
-            "#recent-location-cards .liquid-glass, #recent-location-cards .selected-liquid-glass"
+            "#recent-location-cards .selected-liquid-glass, #current-card.selected-liquid-glass"
           )
           .forEach((c) => {
             c.classList.remove("selected-liquid-glass");
@@ -175,15 +177,12 @@ async function getWeather(city, isCurrentLocation = false) {
             }
           });
 
-        // Remove highlight from current location card
-        currentCard.classList.remove("selected-liquid-glass");
-        currentCard.classList.add("liquid-glass");
-
-        // Highlight this one
         searchedCard.classList.remove("liquid-glass");
         searchedCard.classList.add("selected-liquid-glass");
 
-        // Fetch weather for clicked city
+        currentCard.classList.remove("selected-liquid-glass");
+        currentCard.classList.add("liquid-glass");
+
         getWeather(cityName, false);
       });
 
@@ -191,12 +190,11 @@ async function getWeather(city, isCurrentLocation = false) {
       locationCards.appendChild(searchedCard);
     });
 
-    // Handle current location separately
+    // Current location click behavior
     currentLocationCard.onclick = () => {
-      // Reset highlight for all recent search cards
       document
         .querySelectorAll(
-          "#recent-location-cards .liquid-glass, #recent-location-cards .selected-liquid-glass"
+          "#recent-location-cards .selected-liquid-glass, #recent-location-cards .liquid-glass"
         )
         .forEach((c) => {
           c.classList.remove("selected-liquid-glass");
@@ -205,34 +203,32 @@ async function getWeather(city, isCurrentLocation = false) {
           }
         });
 
-      // Highlight current location
       currentCard.classList.add("selected-liquid-glass");
       currentCard.classList.remove("liquid-glass");
 
-      // Clear last selected city
       localStorage.removeItem("selectedCity");
-
-      // Fetch weather for current location
       getWeather(currentLocation, true);
     };
 
-    // temperature =====================================================
+    // Highlight current card only if from current location
+    if (isCurrentLocation) {
+      currentCard.classList.add("selected-liquid-glass");
+      currentCard.classList.remove("liquid-glass");
+    }
+
+    // =================== Weather Display ===================
     const temp_c = parseInt(result.current.temp_c);
     const temp_f = parseInt(result.current.temp_f);
     tempratureDisplay.innerHTML = `${temp_c}°C`;
 
-    // weather report =================================================
     const weather = result.current.condition.text;
-    const weatherReport = document.querySelector("#weather-report");
-    weatherReport.innerHTML = weather;
+    document.querySelector("#weather-report").innerHTML = weather;
 
-    // feels like =====================================================
     const feelslike_c = parseInt(result.current.feelslike_c);
     const feelslike_f = parseInt(result.current.feelslike_f);
     const feelsC = document.querySelector("#feels-like");
     feelsC.innerHTML = `Feels Like ${feelslike_c}°C`;
 
-    // current weather toggle between Cel & Fe ========================
     const weather_cel_fer = document.querySelector("#current-weather");
     weather_cel_fer.onclick = () => {
       if (isCelsioous === false) {
@@ -245,12 +241,11 @@ async function getWeather(city, isCurrentLocation = false) {
       isCelsioous = !isCelsioous;
     };
 
-    // ======================== 5-Day Forecast ========================
+    // =================== Forecast Section ===================
     const forecastContainer = document.querySelector("#days");
     forecastContainer.innerHTML = "";
 
-    const forecastDays = result.forecast.forecastday;
-    forecastDays.forEach((day) => {
+    result.forecast.forecastday.forEach((day) => {
       const date = day.date;
       const condition = day.day.condition.text;
       const icon = day.day.condition.icon;
@@ -297,3 +292,4 @@ window.addEventListener("load", async () => {
     });
   }
 });
+// localStorage.clear();
