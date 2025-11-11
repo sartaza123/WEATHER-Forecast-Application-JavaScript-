@@ -3,19 +3,19 @@ let input = document.querySelector("#input");
 const tempratureDisplay = document.querySelector(".temprature");
 const validation = document.querySelector("#validation");
 
-// creating suggestions container =======================================
+// ========== Create suggestion box ==========
 let suggestionBox = document.createElement("ul");
 suggestionBox.id = "city-suggestions";
 suggestionBox.className =
   "absolute bg-white opacity-50 shadow-lg rounded-lg mt-10 ml-5 max-h-48 overflow-y-auto z-50 text-gray-800";
 input.parentElement.appendChild(suggestionBox);
 
-// ----------------------------------- City Suggestions While Typing --------------------------------------
+// ========== City Suggestions While Typing ==========
 input.addEventListener("input", async () => {
   const query = input.value.trim();
-  suggestionBox.innerHTML = ""; // clear old suggestions
+  suggestionBox.innerHTML = "";
 
-  if (query.length < 2) return; // wait until 2+ characters
+  if (query.length < 2) return;
 
   try {
     const response = await fetch(
@@ -44,7 +44,7 @@ input.addEventListener("input", async () => {
   }
 });
 
-// ------------------ Search Button Click ------------------
+// ========== Search Button ==========
 searchBtn.addEventListener("click", () => {
   const city = input.value.trim();
   if (city === "") {
@@ -54,44 +54,33 @@ searchBtn.addEventListener("click", () => {
   getWeather(city, false);
 });
 
-// --------------- Dynamic background------------
+// ========== Dynamic Background ==========
 function updateBackground(condition, isDay) {
   const dynamicBackground = document.querySelector("#background");
   const weather = condition.toLowerCase();
 
-  let bgImage = "default.jpg"; // fallback
-
-  if (weather.includes("rain")) {
-    bgImage = "rain.jpg";
-  } else if (weather.includes("cloud")) {
-    bgImage = "cloudy.jpg";
-  } else if (weather.includes("snow")) {
-    bgImage = "snow.jpg";
-  } else if (weather.includes("mist") || weather.includes("fog")) {
+  let bgImage = "default.jpg";
+  if (weather.includes("rain")) bgImage = "rain.jpg";
+  else if (weather.includes("cloud")) bgImage = "cloudy.jpg";
+  else if (weather.includes("snow")) bgImage = "snow.jpg";
+  else if (weather.includes("mist") || weather.includes("fog"))
     bgImage = "mist.jpg";
-  } else if (weather.includes("thunder")) {
-    bgImage = "thunder.jpeg";
-  } else if (isDay === 0) {
-    bgImage = "night.jpg";
-  } else if (weather.includes("sunny") || weather.includes("clear")) {
+  else if (weather.includes("thunder")) bgImage = "thunder.jpeg";
+  else if (isDay === 0) bgImage = "night.jpg";
+  else if (weather.includes("sunny") || weather.includes("clear"))
     bgImage = "sunny.jpg";
-  }
 
-  // Clear previous background before adding a new one
-  dynamicBackground.innerHTML = "";
-
-  // Apply background image
+  dynamicBackground.innerHTML = ""; // Clear old
   const backgroundImg = document.createElement("img");
   backgroundImg.setAttribute("src", `assets/images/${bgImage}`);
   backgroundImg.setAttribute(
     "class",
     "fixed top-0 left-0 w-full h-full object-cover -z-10"
   );
-
   dynamicBackground.appendChild(backgroundImg);
 }
 
-// ------------------ Get Weather Function ------------------
+// ========== Get Weather Function ==========
 async function getWeather(city, isCurrentLocation = false) {
   let isCelsioous = true;
   const url = `https://api.weatherapi.com/v1/forecast.json?key=02193e91dd7b4b849d4104126250211&q=${city}&days=5&aqi=no`;
@@ -100,47 +89,44 @@ async function getWeather(city, isCurrentLocation = false) {
     const response = await fetch(url);
     const result = await response.json();
 
-    // Update background dynamically
     updateBackground(result.current.condition.text, result.current.is_day);
 
-    // DOM references
     const searchedLocation = result.location.name;
     const locationCards = document.querySelector("#recent-location-cards");
     const currentLocationCard = document.querySelector(
       "#current-location-card"
     );
+    const currentCard = document.querySelector("#current-card");
     const currentLocationName = document.querySelector(
       "#current-location-name"
     );
-    const currentCard = document.querySelector("#current-card");
 
+    // Get saved cities
     let recentCities = JSON.parse(localStorage.getItem("recentSearches")) || [];
 
-    // If new city -> add to top, maintain limit
-    const cityIndex = recentCities.indexOf(searchedLocation);
-    if (cityIndex === -1) {
-      recentCities.unshift(searchedLocation);
-      if (recentCities.length > 6) recentCities.pop();
+    // If it's NOT current location
+    if (!isCurrentLocation) {
+      const index = recentCities.indexOf(searchedLocation);
+      if (index === -1) {
+        recentCities.unshift(searchedLocation);
+        if (recentCities.length > 6) recentCities.pop();
+      }
+      localStorage.setItem("recentSearches", JSON.stringify(recentCities));
+      localStorage.setItem("selectedCity", searchedLocation);
+    } else {
+      // Update current location name on load
+      currentLocationName.innerHTML = searchedLocation;
     }
-    localStorage.setItem("recentSearches", JSON.stringify(recentCities));
-    const currentLocation = recentCities.splice(recentCities.length - 1);
-    currentLocationName.innerHTML = currentLocation;
 
-    // 🧹 Unhighlight all before setting new highlights
+    // ===== Unhighlight all cards before re-render =====
     document
-      .querySelectorAll(
-        "#recent-location-cards .selected-liquid-glass, #current-card.selected-liquid-glass"
-      )
-      .forEach((c) => {
-        c.classList.remove("selected-liquid-glass");
-        if (!c.classList.contains("liquid-glass")) {
-          c.classList.add("liquid-glass");
-        }
-      });
+      .querySelectorAll(".selected-liquid-glass")
+      .forEach((c) => c.classList.remove("selected-liquid-glass"));
 
-    // =================== Render searched cards ===================
+    currentCard.classList.add("liquid-glass");
+
+    // ====== Render Searched Cities ======
     locationCards.innerHTML = "";
-    localStorage.setItem("selectedCity", searchedLocation);
     const lastSelectedCity = localStorage.getItem("selectedCity");
 
     recentCities.forEach((cityName) => {
@@ -153,19 +139,21 @@ async function getWeather(city, isCurrentLocation = false) {
       const searchedLocationName = document.createElement("div");
       searchedLocationName.innerHTML = cityName;
 
-      // Highlight new or existing searched city
+      // Restore highlight if it matches selected city
       if (
         !isCurrentLocation &&
+        lastSelectedCity &&
         cityName.trim().toLowerCase() === lastSelectedCity.trim().toLowerCase()
       ) {
         searchedCard.classList.remove("liquid-glass");
         searchedCard.classList.add("selected-liquid-glass");
       }
 
-      // Click handler for city card
+      // Click on searched card
       searchedCard.addEventListener("click", () => {
         localStorage.setItem("selectedCity", cityName);
 
+        // Remove highlights
         document
           .querySelectorAll(
             "#recent-location-cards .selected-liquid-glass, #current-card.selected-liquid-glass"
@@ -177,9 +165,11 @@ async function getWeather(city, isCurrentLocation = false) {
             }
           });
 
+        // Highlight clicked one
         searchedCard.classList.remove("liquid-glass");
         searchedCard.classList.add("selected-liquid-glass");
 
+        // Remove highlight from current location
         currentCard.classList.remove("selected-liquid-glass");
         currentCard.classList.add("liquid-glass");
 
@@ -190,7 +180,7 @@ async function getWeather(city, isCurrentLocation = false) {
       locationCards.appendChild(searchedCard);
     });
 
-    // Current location click behavior
+    // ===== Handle Current Location Card =====
     currentLocationCard.onclick = () => {
       document
         .querySelectorAll(
@@ -207,28 +197,29 @@ async function getWeather(city, isCurrentLocation = false) {
       currentCard.classList.remove("liquid-glass");
 
       localStorage.removeItem("selectedCity");
-      getWeather(currentLocation, true);
+      getWeather(currentLocationName.innerHTML, true);
     };
 
-    // Highlight current card only if from current location
+    // Highlight current card on load only if current location
     if (isCurrentLocation) {
       currentCard.classList.add("selected-liquid-glass");
       currentCard.classList.remove("liquid-glass");
     }
 
-    // =================== Weather Display ===================
+    // ===== Temperature and Details =====
     const temp_c = parseInt(result.current.temp_c);
     const temp_f = parseInt(result.current.temp_f);
     tempratureDisplay.innerHTML = `${temp_c}°C`;
 
-    const weather = result.current.condition.text;
-    document.querySelector("#weather-report").innerHTML = weather;
+    document.querySelector("#weather-report").innerHTML =
+      result.current.condition.text;
 
     const feelslike_c = parseInt(result.current.feelslike_c);
     const feelslike_f = parseInt(result.current.feelslike_f);
     const feelsC = document.querySelector("#feels-like");
     feelsC.innerHTML = `Feels Like ${feelslike_c}°C`;
 
+    // °C / °F toggle
     const weather_cel_fer = document.querySelector("#current-weather");
     weather_cel_fer.onclick = () => {
       if (isCelsioous === false) {
@@ -241,7 +232,7 @@ async function getWeather(city, isCurrentLocation = false) {
       isCelsioous = !isCelsioous;
     };
 
-    // =================== Forecast Section ===================
+    // ====== 5-Day Forecast ======
     const forecastContainer = document.querySelector("#days");
     forecastContainer.innerHTML = "";
 
@@ -265,6 +256,7 @@ async function getWeather(city, isCurrentLocation = false) {
       forecastContainer.appendChild(card);
     });
 
+    // Clear input + validation
     input.value = "";
     validation.innerHTML = "";
     suggestionBox.innerHTML = "";
@@ -273,7 +265,7 @@ async function getWeather(city, isCurrentLocation = false) {
   }
 }
 
-//  current location when load =======================================
+// ========== Current Location On Load ==========
 window.addEventListener("load", async () => {
   if (navigator.geolocation) {
     navigator.geolocation.getCurrentPosition(async (position) => {
