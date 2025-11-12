@@ -35,3 +35,8 @@
   box-shadow: inset 0 0 20px rgba(255, 255, 255, 0.2),
     0 12px 40px rgba(0, 0, 0, 0.3);
 }
+
+#main-heading {
+  -webkit-text-stroke: 0.2px #ffffff;
+  color: #0066ff;
+}
