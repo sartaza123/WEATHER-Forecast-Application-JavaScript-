@@ -132,7 +132,7 @@ async function getWeather(city, isCurrentLocation = false) {
     recentCities.forEach((cityName) => {
       const searchedCard = document.createElement("div");
       searchedCard.className =
-        "px-3 py-1 mr-6 flex items-center liquid-glass cursor-pointer transition-all duration-300";
+        "px-3 py-1 mr-6 flex items-center liquid-glass cursor-pointer transition-all duration-300 rounded-[20px]";
 
       const locationLogo = document.createElement("div");
       locationLogo.innerHTML = `<ion-icon name='location-outline'></ion-icon>`;
@@ -250,11 +250,11 @@ async function getWeather(city, isCurrentLocation = false) {
       card.className =
         "p-4 rounded-xl bg-white/10 backdrop-blur-lg text-white text-center shadow-md m-2 w-32";
       card.innerHTML = `
-    <p class="font-semibold text-sm">${formattedDate}</p>
+    <p class="md:font-semibold sm:font-normal md:text-sm text-[12px]">${formattedDate}</p>
     <img src="${icon}" alt="${condition}" class="mx-auto w-12 h-12">
-    <p class="text-sm">${condition}</p>
-    <p class="text-lg font-bold">${maxTemp}°C</p>
-    <p class="text-xs text-gray-300">Min ${minTemp}°C</p>
+    <p class="md:text-sm lg:text-lg text-[13px]">${condition}</p>
+    <p class="md:text-lg sm:text-sm font-bold">${maxTemp}°C</p>
+    <p class="md:text-xs text-[10px] text-gray-300">Min ${minTemp}°C</p>
   `;
       forecastContainer.appendChild(card);
     });
