@@ -219,6 +219,12 @@ async function getWeather(city, isCurrentLocation = false) {
     const feelsC = document.querySelector("#feels-like");
     feelsC.innerHTML = `Feels Like ${feelslike_c}°C`;
 
+    const humidityAndWindSpeed = (document.querySelector(
+      "#humidity-and-wind"
+    ).innerHTML = `Humidity: ${result.current.humidity}%  Wind Speed: ${
+      result.current.wind_kph
+    }km/h`);
+
     // °C / °F toggle
     const weather_cel_fer = document.querySelector("#current-weather");
     weather_cel_fer.onclick = () => {
